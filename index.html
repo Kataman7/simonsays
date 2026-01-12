@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simon Says</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: white;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        #gameCanvas {
+            display: block;
+            cursor: pointer;
+        }
+
+        #ui {
+            position: absolute;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            color: #333;
+            text-shadow: none;
+        }
+
+        #message {
+            position: absolute;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 18px;
+            text-align: center;
+            color: #333;
+            transition: all 0.3s ease;
+        }
+
+        #level {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        #score {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        #soundHint {
+            position: absolute;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 14px;
+            color: #666;
+            text-align: center;
+        }
+
+        .button-container {
+            margin: 15px 0;
+        }
+
+        button {
+            background: #333;
+            border: 2px solid #333;
+            color: white;
+            padding: 8px 20px;
+            font-size: 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 0 5px;
+        }
+
+        button:hover {
+            background: #555;
+            border-color: #555;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .success {
+            color: #4ade80 !important;
+        }
+
+        .error {
+            color: #f87171 !important;
+        }
+    </style>
+</head>
+<body>
+    <div id="ui">
+        <div id="level">Niveau 1</div>
+        <div id="score">Score: 0</div>
+        <div class="button-container">
+            <button id="startButton">Commencer</button>
+            <button id="restartButton" style="display: none;">Recommencer</button>
+        </div>
+    </div>
+
+    <div id="message">Prêt à jouer ?</div>
+    <div id="soundHint">🔊 Activez le son pour une meilleure expérience</div>
+
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+
+    <script type="module" src="main.js"></script>
+</body>
+</html>

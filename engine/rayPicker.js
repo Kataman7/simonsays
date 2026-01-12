@@ -15,7 +15,7 @@ export class RayPicker {
         for (const cube of this.cubeModel.cubes) {
             const worldPos = this.transformPosition(cube.position, modelMatrix);
             
-            const cubeSize = 0.1 * cube.scale;
+            const cubeSize = 0.14 * cube.scale;
 
             const intersection = this.rayBoxIntersection(
                 ray.origin,

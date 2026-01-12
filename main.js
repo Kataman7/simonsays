@@ -45,6 +45,7 @@ class SimonSaysGame {
 
     setupEventListeners() {
         this.canvas.addEventListener('click', (e) => this.handleClick(e));
+        this.canvas.addEventListener('mousemove', (e) => this.handleMouseMove(e));
 
         this.startButton.addEventListener('click', () => this.startGame());
 
@@ -56,20 +57,35 @@ class SimonSaysGame {
     handleClick(event) {
         if (!this.gameState.canClick()) return;
 
-        const rect = this.canvas.getBoundingClientRect();
-        const x = event.clientX - rect.left;
-        const y = event.clientY - rect.top;
+        const pickedCube = this.getPickedCube(event.clientX, event.clientY);
 
-        const pickedCube = this.rayPicker.pick(
+        if (pickedCube) {
+            this.handleCubeClick(pickedCube);
+        }
+    }
+
+    handleMouseMove(event) {
+        if (!this.gameState.canClick()) {
+            this.canvas.style.cursor = 'default';
+            return;
+        }
+
+        const pickedCube = this.getPickedCube(event.clientX, event.clientY);
+
+        this.canvas.style.cursor = pickedCube ? 'pointer' : 'default';
+    }
+
+    getPickedCube(clientX, clientY) {
+        const rect = this.canvas.getBoundingClientRect();
+        const x = clientX - rect.left;
+        const y = clientY - rect.top;
+
+        return this.rayPicker.pick(
             x, y,
             this.canvas.width,
             this.canvas.height,
             this.renderer.getModelMatrix()
         );
-
-        if (pickedCube) {
-            this.handleCubeClick(pickedCube);
-        }
     }
 
     getActiveFace() {
@@ -262,6 +278,9 @@ class SimonSaysGame {
     }
 
     onStateChange(newState, oldState) {
+        if (newState !== 'waiting') {
+            this.canvas.style.cursor = 'default';
+        }
     }
 
     handleResize() {

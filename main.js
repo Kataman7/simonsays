@@ -55,24 +55,26 @@ class SimonSaysGame {
     }
 
     handleClick(event) {
-        if (!this.gameState.canClick()) return;
-
         const pickedCube = this.getPickedCube(event.clientX, event.clientY);
 
-        if (pickedCube) {
+        if (!pickedCube) return;
+
+        if (this.gameState.getState() === 'idle') {
+            const logicalId = this.getLogicalIdFromCube(pickedCube);
+            this.playNoteAndHighlight(logicalId);
+        } else if (this.gameState.canClick()) {
             this.handleCubeClick(pickedCube);
         }
     }
 
     handleMouseMove(event) {
-        if (!this.gameState.canClick()) {
-            this.canvas.style.cursor = 'default';
-            return;
-        }
-
         const pickedCube = this.getPickedCube(event.clientX, event.clientY);
 
-        this.canvas.style.cursor = pickedCube ? 'pointer' : 'default';
+        if (pickedCube && (this.gameState.getState() === 'idle' || this.gameState.canClick())) {
+            this.canvas.style.cursor = 'pointer';
+        } else {
+            this.canvas.style.cursor = 'default';
+        }
     }
 
     getPickedCube(clientX, clientY) {
@@ -92,6 +94,20 @@ class SimonSaysGame {
         return this.faceOrder[this.currentFaceIndex];
     }
 
+    getLogicalIdFromCube(cube) {
+        return this.cubeModel.calculateLogicalId(
+            this.getActiveFace(),
+            cube.gridPos.x,
+            cube.gridPos.y,
+            cube.gridPos.z
+        );
+    }
+
+    playNoteAndHighlight(logicalId) {
+        this.highlightLogicalId(logicalId);
+        this.audioManager.playNote(logicalId);
+    }
+
     async handleCubeClick(cube) {
         const activeFace = this.getActiveFace();
 
@@ -99,19 +115,13 @@ class SimonSaysGame {
             return;
         }
 
-        const logicalId = this.cubeModel.calculateLogicalId(
-            activeFace,
-            cube.gridPos.x,
-            cube.gridPos.y,
-            cube.gridPos.z
-        );
+        const logicalId = this.getLogicalIdFromCube(cube);
         
         this.processInput(logicalId);
     }
 
     async processInput(logicalId) {
-        this.highlightLogicalId(logicalId);
-        this.audioManager.playNote(logicalId);
+        this.playNoteAndHighlight(logicalId);
 
         const result = this.sequenceManager.addPlayerInput(logicalId);
 
@@ -212,8 +222,7 @@ class SimonSaysGame {
             const logicalId = sequence[i];
             
             this.showMessage(`Mémorisez la séquence... (${i + 1}/${sequence.length})`);
-            this.highlightLogicalId(logicalId);
-            this.audioManager.playNote(logicalId);
+            this.playNoteAndHighlight(logicalId);
             await this.sleep(delay);
         }
 

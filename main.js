@@ -148,14 +148,17 @@ class SimonSaysGame {
         });
         
         matchingCubes.forEach(cube => {
-            const originalColor = [...cube.color];
+            if (cube.highlightTimeout) {
+                clearTimeout(cube.highlightTimeout);
+            }
             
             cube.color = [1.0, 1.0, 1.0];
             cube.scale = 1.3;
             
-            setTimeout(() => {
-                cube.color = originalColor;
+            cube.highlightTimeout = setTimeout(() => {
+                cube.color = [...cube.baseColor];
                 cube.scale = 1.0;
+                cube.highlightTimeout = null;
                 this.updateGeometry();
             }, 400);
         });
